@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct node
 {
@@ -128,6 +129,7 @@ struct node *avltree_lookup(struct node *root, int key)
     {
         avltree_lookup(root->left, key);
     }
+    return NULL;
 }
 
 struct node *avltree_delete(struct node *root, int x)
@@ -200,7 +202,11 @@ struct node *avltree_delete(struct node *root, int x)
         }
     }
     root->height = getHeight(root);
-    return (root);
+    return root;
+}
+
+struct node *avltree_delete_lazy(struct node *root, int x){
+    
 }
 
 struct node *avltree_min(struct node *tree)
@@ -253,12 +259,23 @@ int main()
 {
     struct node *root = NULL;
     struct node *lookup = NULL;
-    for (int i = 0; i < 20; i++)
+    double start;
+    double end;
+    for (int i = 1; i < 50000; i++)
     {
         root = avltree_add(root, i, "sss");
+        if (i % 1000 == 0)
+        {
+            start = clock();
+            for (int j = 0; j < 100000; j++)
+                lookup = avltree_lookup(root, rand() % i);
+            end = clock();
+            printf("%.6lf\n", (end - start) / CLOCKS_PER_SEC);
+        }
     }
-    avltree_delete(root, 4);
-    lookup = avltree_lookup(root, 2);
-    print_node(root, 0);
+
+    // avltree_delete(root, 4);
+    // lookup = avltree_lookup(root, 2);
+    avltree_free(root);
     return 0;
 }
