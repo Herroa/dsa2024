@@ -11,11 +11,11 @@ struct trie
     bool end_of_key;
 };
 
-struct trie *trie_create(char value);//
+struct trie *trie_create(char value); //
 struct trie *trie_insert(struct trie *root, char *key);
-void trie_lookup(struct trie *root, char *key);//what return?
-struct trie *trie_delete(struct trie *root, char *key);//do we need to delete a word or a node?
-void trie_print(struct trie *root);//level?
+void trie_lookup(struct trie *root, char *key);         // what return?
+struct trie *trie_delete(struct trie *root, char *key); // do we need to delete a word or a node?
+void trie_print(struct trie *root);                     // level?
 
 struct trie *trie_create(char value)
 {
@@ -65,6 +65,48 @@ void trie_lookup(struct trie *root, char *key)
     }
 }
 
+void free_trienode(struct trie *node)
+{
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+    {
+        if (node->children[i] != NULL)
+        {
+            free_trienode(node->children[i]);
+        }
+        else
+        {
+            continue;
+        }
+    }
+    free(node);
+}
+
+struct trie *trie_delete(struct trie *root, char *key)
+{
+    struct trie *temp = root;
+
+    for (int i = 0; key[i] != '\0'; i++)
+    {
+        int count = 0;
+        int position = key[i] - 'a';
+        for (int i = 0; i < ALPHABET_SIZE; i++)
+        {
+            if (temp->children[i]!=NULL)
+            {
+                count++;
+            }
+        }
+        if (count == 1)
+        {
+            free_trienode(temp->children[position]);
+            temp->children[position]=NULL;
+            return root;
+        }
+        temp = temp->children[position];
+    }
+    return root;
+}
+
 void trie_print(struct trie *root)
 {
     if (!root)
@@ -80,12 +122,12 @@ void trie_print(struct trie *root)
 int main()
 {
     struct trie *root = trie_create('\0');
-    
+
     root = trie_insert(root, "hello");
     root = trie_insert(root, "hi");
     root = trie_insert(root, "teabag");
     root = trie_insert(root, "teacan");
-
+    root = trie_delete(root, "hello");
     trie_lookup(root, "tea");
     trie_lookup(root, "teabag");
     trie_lookup(root, "teacan");
