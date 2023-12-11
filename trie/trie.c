@@ -22,7 +22,7 @@ struct trie *trie_create(char value)
     struct trie *node = malloc(sizeof(struct trie));
     for (int i = 0; i < ALPHABET_SIZE; i++)
         node->children[i] = NULL;
-    node->end_of_key = 0;
+    node->end_of_key = false;
     node->value = value;
     return node;
 }
@@ -52,17 +52,17 @@ struct trie *trie_lookup(struct trie *root, char *key)
     {
         int position = key[i] - 'a';
         if (temp->children[position] == NULL)
-        {
+        {   
             printf("The word %s is not found!\n", key);
             return root;
         }
 
         temp = temp->children[position];
     }
-    if (temp != NULL && temp->end_of_key == 1)
+    if (temp != NULL && temp->end_of_key == true)
     {
         printf("The word %s is found!\n", key);
-        return temp;
+        return root;
     }
     else
     {
@@ -78,10 +78,6 @@ void free_trienode(struct trie *node)
         if (node->children[i] != NULL)
         {
             free_trienode(node->children[i]);
-        }
-        else
-        {
-            continue;
         }
     }
     free(node);
@@ -141,6 +137,6 @@ int main()
     trie_lookup(root, "hey");
     trie_lookup(root, "hello");
 
-    trie_print(root);
+    trie_print(root);   
     return 0;
 }
