@@ -13,9 +13,9 @@ struct trie
 
 struct trie *trie_create(char value); //
 struct trie *trie_insert(struct trie *root, char *key);
-void trie_lookup(struct trie *root, char *key);         // what return?
-struct trie *trie_delete(struct trie *root, char *key); // do we need to delete a word or a node?
-void trie_print(struct trie *root);                     // level?
+struct trie *trie_lookup(struct trie *root, char *key);
+struct trie *trie_delete(struct trie *root, char *key); 
+void trie_print(struct trie *root);                 
 
 struct trie *trie_create(char value)
 {
@@ -44,7 +44,7 @@ struct trie *trie_insert(struct trie *root, char *key)
     return root;
 }
 
-void trie_lookup(struct trie *root, char *key)
+struct trie *trie_lookup(struct trie *root, char *key)
 {
     struct trie *temp = root;
 
@@ -52,16 +52,22 @@ void trie_lookup(struct trie *root, char *key)
     {
         int position = key[i] - 'a';
         if (temp->children[position] == NULL)
+        {
             printf("The word %s is not found!\n", key);
+            return root;
+        }
+
         temp = temp->children[position];
     }
     if (temp != NULL && temp->end_of_key == 1)
     {
         printf("The word %s is found!\n", key);
+        return temp;
     }
     else
     {
         printf("The word %s is not found!\n", key);
+        return root;
     }
 }
 
@@ -91,7 +97,7 @@ struct trie *trie_delete(struct trie *root, char *key)
         int position = key[i] - 'a';
         for (int i = 0; i < ALPHABET_SIZE; i++)
         {
-            if (temp->children[i]!=NULL)
+            if (temp->children[i] != NULL)
             {
                 count++;
             }
@@ -99,7 +105,7 @@ struct trie *trie_delete(struct trie *root, char *key)
         if (count == 1)
         {
             free_trienode(temp->children[position]);
-            temp->children[position]=NULL;
+            temp->children[position] = NULL;
             return root;
         }
         temp = temp->children[position];
